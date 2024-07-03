@@ -5,9 +5,6 @@
 // approximate the curve's length.
 // The second approach gets the exact length using the ARC method.
 
-
-//use std::f64::consts::PI;
-
 fn s_curve_function(x: f64) -> f64 {
     // Replace this with your actual S-curve function
     1.0 / (1.0 + (x - 2.0).powf(2.0))
