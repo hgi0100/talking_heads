@@ -11,7 +11,7 @@ fn s_curve(t: f64, a: f64, b: f64) -> f64 {
     }
 
 fn do_s_curve(i: usize) -> Vec<f64> {
-        let mut scvec: Vec<f64> = Vec::new();
+        let mut svec: Vec<f64> = Vec::new();
 
         for t in 0..=i {
             let s = i as f64;
@@ -20,28 +20,32 @@ fn do_s_curve(i: usize) -> Vec<f64> {
             // Example S-curve
             let a = s_curve(q, 1.0, 0.0);
 
-            scvec.push(a);
+            svec.push(a);
         }
-        scvec
+        svec
     }
 
-fn s_curve_derivative(x: f64) -> f64 {
-    -4.0 * (x - 2.0) / ((1.0 + (x - 2.0).powf(2.0)).powf(2.0))
-}
+//fn s_curve_derivative(x: f64) -> f64 {
+//    //-4.0 * (x - 2.0) / ((1.0 + (x - 2.0).powf(2.0)).powf(2.0))
+//}
 
-fn arc_length(svec: Vec<f64>, a: f64, _b: f64) -> f64 {
+fn s_curve_derivative(t: f64, a: f64, b: f64) -> f64 {
+        6.0 * a * t * (1.0 - t) + 2.0 * b * t.powi(2) * (3.0 - 2.0 * t) - 4.0 * b * t.powi(3) * (1.0 - t)
+    }
+
+
+fn arc_length(svec: Vec<f64>, a: f64, b: f64) -> f64 {
     let mut integral = 0.0;
-    let y = a as i32;
-    let z = SEGMENTS as i32;
+    let num_segments = svec.len() - 1; // Total number of segments
 
-    //dbg!(z);
-
-    for x in y..z {
-        let f = svec[x as usize];
-        let dx = 1; // step size is actually 0.001 hence * 1000 everywhere
-        let dy = (f + dx as f64) / 1000f64 - f / 1000f64;
-        integral += (dy * dy + s_curve_derivative((x as f64) + (dx as f64 / 1000f64) / 2.0).powf(2.0)).sqrt();
+    for x in 0..num_segments {
+        let f = svec[x];
+        let dx = 0.001; // Smaller step size
+        let dy = (svec[x + 1] - f) / dx;
+        //integral += (dy * dy + s_curve_derivative(x as f64 / num_segments as f64, 1.0, 0.0).powf(2.0)).sqrt() * dx;
+        integral += (dy * dy + s_curve_derivative(x as f64 / num_segments as f64, a, b).powf(2.0)).sqrt() * dx;
     }
+
     integral
 }
 
