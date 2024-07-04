@@ -34,7 +34,7 @@ fn s_curve_derivative(x: f64) -> f64 {
     -4.0 * (x - 2.0) / ((1.0 + (x - 2.0).powf(2.0)).powf(2.0))
 }
 
-fn arc_length(svec: Vec<(f64, f64, f64)>, a: f64, b: f64) -> f64 {
+fn arc_length(svec: Vec<(f64)>, a: f64, b: f64) -> f64 {
     let mut integral = 0.0;
     let k = 100 / b as i32;
     let y = a as i32;
@@ -43,8 +43,8 @@ fn arc_length(svec: Vec<(f64, f64, f64)>, a: f64, b: f64) -> f64 {
     //dbg!(z);
 
     for x in y..z {
-        let f = svec[x as usize].0;
-        let dx = 1; // Adjust step size as needed
+        let f = svec[x as usize];
+        let dx = 1; // step size is actually 0.001 hence * 1000 everywhere
         let dy = (f + dx as f64) / 1000f64 - f / 1000f64;
         integral += (dy * dy + s_curve_derivative((x as f64) + (dx as f64 / 1000f64) / 2.0).powf(2.0)).sqrt();
     }
@@ -59,10 +59,19 @@ fn main() {
     let segments = 100;
     let svec = do_s_curve(segments);
 
+    let sv_normal: Vec<(f64)> = svec.iter().map(|&(x, _, _)| x).collect();
+    let sv_one: Vec<(f64)> = svec.iter().map(|&(_, x, _)| x).collect();
+    let sv_two: Vec<(f64)> = svec.iter().map(|&(_, _, x)| x).collect();
+
     println!();
 
-    let arc_length = arc_length(svec.clone(), a, b);
-    println!("Exact length of S-curve using the ARC method: \t{}", arc_length);
+    let arc_length0 = arc_length(sv_normal, a, b);
+    let arc_length1 = arc_length(sv_one, a, b);
+    let arc_length2 = arc_length(sv_two, a, b);
+
+    println!("Exact length of normal S-curve using the ARC method: \t{}", arc_length0);
+    println!("Exact length of Back Loaded S-curve using the ARC method: \t{}", arc_length1);
+    println!("Exact length of Front Loaded S-curve using the ARC method: \t{}", arc_length2);
 
     println!();
 }
