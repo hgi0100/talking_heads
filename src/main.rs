@@ -17,17 +17,13 @@ fn do_s_curve(i: usize) -> Vec<f64> {
             let s = i as f64;
             let q = t as f64 / s;
 
-            // Example S-curve
+            // Normal S-curve
             let a = s_curve(q, 1.0, 0.0);
 
             svec.push(a);
         }
         svec
     }
-
-//fn s_curve_derivative(x: f64) -> f64 {
-//    //-4.0 * (x - 2.0) / ((1.0 + (x - 2.0).powf(2.0)).powf(2.0))
-//}
 
 fn s_curve_derivative(t: f64, a: f64, b: f64) -> f64 {
         6.0 * a * t * (1.0 - t) + 2.0 * b * t.powi(2) * (3.0 - 2.0 * t) - 4.0 * b * t.powi(3) * (1.0 - t)
@@ -42,7 +38,6 @@ fn arc_length(svec: Vec<f64>, a: f64, b: f64) -> f64 {
         let f = svec[x];
         let dx = 0.001; // Smaller step size
         let dy = (svec[x + 1] - f) / dx;
-        //integral += (dy * dy + s_curve_derivative(x as f64 / num_segments as f64, 1.0, 0.0).powf(2.0)).sqrt() * dx;
         integral += (dy * dy + s_curve_derivative(x as f64 / num_segments as f64, a, b).powf(2.0)).sqrt() * dx;
     }
 
@@ -53,6 +48,7 @@ fn main() {
     let segments = SEGMENTS;
 
     let svec = do_s_curve(segments);
+
     println!();
 
     let arc_length0 = arc_length(svec.clone(), 1.0, 0.01);
