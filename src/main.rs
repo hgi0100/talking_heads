@@ -19,7 +19,6 @@ fn do_s_curve(i: usize) -> Vec<f64> {
 
             // Normal S-curve
             let a = s_curve(q, 1.0, 0.0);
-
             svec.push(a);
         }
         svec
@@ -40,18 +39,13 @@ fn arc_length(svec: Vec<f64>, a: f64, b: f64) -> f64 {
         let dy = (svec[x + 1] - f) / dx;
         integral += (dy * dy + s_curve_derivative(x as f64 / num_segments as f64, a, b).powf(2.0)).sqrt() * dx;
     }
-
     integral
 }
 
 fn main() {
-    let segments = SEGMENTS;
-
-    let svec = do_s_curve(segments);
-
     println!();
-
+    let segments = SEGMENTS;
+    let svec = do_s_curve(segments);
     let arc_length0 = arc_length(svec.clone(), 1.0, 0.01);
-
     println!("Exact length of normal S-curve using the ARC method: \t{}", arc_length0);
 }
